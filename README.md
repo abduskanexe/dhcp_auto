@@ -86,27 +86,34 @@ Todos están listados dentro del archivo `apt-requirements.txt`.
 
 Ejecuta este comando en la carpeta del proyecto:
 
-```bash
+bash
+```
 sudo xargs -a apt-requirements.txt apt-get install -y
-Esto instalará automáticamente todos los paquetes necesarios.
+```
 
 📜 Cómo ejecutar el script
 1️⃣ Clona el repositorio:
 
 bash
-Copiar código
+```
 git clone https://github.com/tuusuario/dhcp_auto.git
 cd dhcp_auto
+```
+
 2️⃣ Dale permisos de ejecución:
 
 bash
-Copiar código
+```
 chmod +x dhcp_auto.sh
+```
+
 3️⃣ Ejecútalo como root:
 
 bash
-Copiar código
+```
 sudo ./dhcp_auto.sh
+```
+
 4️⃣ Introduce el rango DHCP cuando te lo pida:
 
 Ejemplo:
@@ -115,55 +122,40 @@ Inicio: 10.0.2.20
 
 Fin: 10.0.2.50
 
+
 📁 Archivos generados automáticamente
 📌 /etc/dhcp/dhcpd.conf
 Incluye:
-
 subnet
-
 netmask
-
 rango DHCP
-
 gateway
-
 broadcast
-
 DNS
-
 tiempos de lease
 
 📌 /etc/default/isc-dhcp-server
 Incluye:
-
 la interfaz que usará el servidor DHCP
+
 
 🧠 Cómo funciona internamente
 El script utiliza comandos del sistema para obtener información real de red:
 
 ip route → interfaz por defecto y gateway
-
 ip addr → CIDR y broadcast
-
 ipcalc → subnet y netmask
-
 awk, cut, grep → parseo de datos
-
 systemctl → gestión del servicio DHCP
-
 ufw → apertura automática del puerto del servicio
 
 Toda esta información se escribe automáticamente en la configuración del DHCP.
 
 🎯 Objetivo del proyecto
 Este proyecto fue creado con las siguientes metas:
-
 Automatizar la configuración completa de un servidor DHCP
-
 Evitar errores al editar archivos manualmente
-
 Mejorar conocimientos de scripting y redes
-
 Crear una herramienta rápida, útil y fácil de usar
 
 📝 Licencia
