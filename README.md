@@ -2,12 +2,12 @@
 
 ![Made with Bash](https://img.shields.io/badge/Made%20with-Bash-1f425f.svg)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
-![Status](https://img.shields.io/badge/Status-Active-brightgreen.svg)
-![Platform](https://img.shields.io/badge/Platform-Linux-blue.svg)
-![DHCP-Server](https://img.shields.io/badge/Service-DHCP-orange.svg)
+![Status: Active](https://img.shields.io/badge/Status-Active-brightgreen.svg)
+![Platform: Linux](https://img.shields.io/badge/Platform-Linux-blue.svg)
+![DHCP](https://img.shields.io/badge/Service-DHCP-orange.svg)
 
 Este repositorio contiene un script en **Bash** que configura automáticamente un servidor **DHCP** en sistemas Linux basados en Debian/Ubuntu.  
-El objetivo es simplificar todo el proceso de configuración del servicio, evitando la edición manual de archivos y obteniendo la información de red directamente desde el sistema.
+El objetivo es simplificar el proceso evitando editar archivos manualmente y obteniendo la información de red automáticamente.
 
 ---
 
@@ -27,33 +27,31 @@ El objetivo es simplificar todo el proceso de configuración del servicio, evita
 
 ## 🚀 Funcionalidad del script
 
-Este script realiza toda la configuración necesaria para desplegar un servidor DHCP completamente funcional:
+### ✔ Obtiene automáticamente:
+- Interfaz por defecto  
+- CIDR  
+- Subnet  
+- Netmask  
+- Gateway  
+- Broadcast  
 
-### ✔️ Obtiene automáticamente información de red:
-- Interfaz por defecto (`interface`)
-- Dirección CIDR (ip/máscara)
-- Subnet (ej: `10.0.2.0`)
-- Netmask (ej: `255.255.255.0`)
-- Gateway real (ej: `10.0.2.2`)
-- Broadcast real (ej: `10.0.2.255`)
+### ✔ Pide al usuario:
+- Rango DHCP (inicio y fin)
 
-### ✔️ Pide al usuario:
-- Rango de direcciones DHCP (inicio y fin)
-
-### ✔️ Genera automáticamente:
+### ✔ Genera automáticamente:
 - `/etc/dhcp/dhcpd.conf`
 - `/etc/default/isc-dhcp-server`
 
-### ✔️ Verifica la configuración:
-- Usa `dhcpd -t -cf` para validar el archivo antes de iniciar el servicio
+### ✔ Verifica la configuración:
+- `dhcpd -t -cf /etc/dhcp/dhcpd.conf`
 
-### ✔️ Gestiona el servicio DHCP:
-- Reinicia el servicio  
-- Lo habilita en el arranque  
-- Muestra su estado actual  
+### ✔ Gestiona el servicio:
+- Reinicio  
+- Habilitar  
+- Estado  
 
-### ✔️ Ajusta el firewall UFW:
-- Abre el puerto **UDP 67** automáticamente
+### ✔ Ajusta firewall UFW:
+- Permite puerto UDP 67
 
 ---
 
@@ -61,102 +59,109 @@ Este script realiza toda la configuración necesaria para desplegar un servidor 
 
 | Archivo | Descripción |
 |--------|-------------|
-| `dhcp_auto.sh` | Script principal que configura el servidor DHCP automáticamente |
-| `apt-requirements.txt` | Archivo con todos los paquetes necesarios para que el script funcione |
-| `README.md` | Documentación del proyecto (este archivo) |
-
-> 🔵 **Nota:** El archivo `apt-requirements.txt` viene incluido en el repositorio.  
-> No necesitas crearlo manualmente.
+| `dhcp_auto.sh` | Script principal |
+| `apt-requirements.txt` | Lista de paquetes necesarios |
+| `README.md` | Este archivo |
 
 ---
 
 ## 🛠️ Requisitos
 
-El script requiere los siguientes paquetes del sistema:
+Paquetes necesarios:
 
-- `isc-dhcp-server` → Servidor DHCP  
-- `ipcalc` → Para calcular subnet y netmask  
-- `ufw` → Para abrir automáticamente el puerto 67  
+- `isc-dhcp-server`
+- `ipcalc`
+- `ufw`
 
-Todos están listados dentro del archivo `apt-requirements.txt`.
+Todos vienen en `apt-requirements.txt`.
 
 ---
 
 ## 🧩 Cómo instalar los requisitos
 
-Ejecuta este comando en la carpeta del proyecto:
+Ejecuta:
 
-bash
-```
+```bash
 sudo xargs -a apt-requirements.txt apt-get install -y
 ```
 
-📜 Cómo ejecutar el script
-1️⃣ Clona el repositorio:
+---
 
-bash
-```
+## 📜 Cómo ejecutar el script
+
+### 1️⃣ Clonar el repositorio:
+
+```bash
 git clone https://github.com/tuusuario/dhcp_auto.git
 cd dhcp_auto
 ```
 
-2️⃣ Dale permisos de ejecución:
+### 2️⃣ Dar permisos:
 
-bash
-```
+```bash
 chmod +x dhcp_auto.sh
 ```
 
-3️⃣ Ejecútalo como root:
+### 3️⃣ Ejecutar como root:
 
-bash
-```
+```bash
 sudo ./dhcp_auto.sh
 ```
 
-4️⃣ Introduce el rango DHCP cuando te lo pida:
+### 4️⃣ Introducir el rango DHCP cuando lo pida:
 
 Ejemplo:
 
-Inicio: 10.0.2.20
+- Inicio: `10.0.2.20`  
+- Fin: `10.0.2.50`
 
-Fin: 10.0.2.50
+---
 
+## 📁 Archivos generados automáticamente
 
-📁 Archivos generados automáticamente
-📌 /etc/dhcp/dhcpd.conf
+### 📌 `/etc/dhcp/dhcpd.conf`
+
 Incluye:
-subnet
-netmask
-rango DHCP
-gateway
-broadcast
-DNS
-tiempos de lease
+- subnet  
+- netmask  
+- rango DHCP  
+- gateway  
+- broadcast  
+- DNS  
+- tiempos de lease  
 
-📌 /etc/default/isc-dhcp-server
+### 📌 `/etc/default/isc-dhcp-server`
+
 Incluye:
-la interfaz que usará el servidor DHCP
+- interfaz configurada
 
+---
 
-🧠 Cómo funciona internamente
-El script utiliza comandos del sistema para obtener información real de red:
+## 🧠 Cómo funciona internamente
 
-ip route → interfaz por defecto y gateway
-ip addr → CIDR y broadcast
-ipcalc → subnet y netmask
-awk, cut, grep → parseo de datos
-systemctl → gestión del servicio DHCP
-ufw → apertura automática del puerto del servicio
+Usa los siguientes comandos:
 
-Toda esta información se escribe automáticamente en la configuración del DHCP.
+- `ip route` → interfaz por defecto y gateway  
+- `ip addr` → CIDR y broadcast  
+- `ipcalc` → subnet y netmask  
+- `awk`, `cut`, `grep` → parseo  
+- `systemctl` → servicio DHCP  
+- `ufw` → reglas del firewall  
 
-🎯 Objetivo del proyecto
-Este proyecto fue creado con las siguientes metas:
-Automatizar la configuración completa de un servidor DHCP
-Evitar errores al editar archivos manualmente
-Mejorar conocimientos de scripting y redes
-Crear una herramienta rápida, útil y fácil de usar
+Todo se genera automáticamente.
 
-📝 Licencia
-Proyecto con licencia MIT — libre para modificar, copiar y compartir.
+---
+
+## 🎯 Objetivo del proyecto
+
+- Automatizar configuración DHCP  
+- Evitar errores manuales  
+- Mejorar conocimientos de redes y Bash  
+- Crear herramienta útil y rápida  
+
+---
+
+## 📝 Licencia
+
+Licencia **MIT**. Libre para compartir y modificar.
+```
